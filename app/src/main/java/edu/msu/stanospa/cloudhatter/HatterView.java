@@ -13,6 +13,9 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -692,5 +695,37 @@ public class HatterView extends View {
         params.hatScale = 1;
         params.hatAngle = 0;
         invalidate();
+    }
+
+    public void loadXml(XmlPullParser xml) throws IOException, XmlPullParserException {
+        // Create a new set of parameters
+        final Parameters newParams = new Parameters();
+
+        // Load into it
+        newParams.imageUri = xml.getAttributeValue(null, "uri");
+        newParams.hatX = Float.parseFloat(xml.getAttributeValue(null, "x"));
+        newParams.hatY = Float.parseFloat(xml.getAttributeValue(null, "y"));
+        newParams.hatAngle = Float.parseFloat(xml.getAttributeValue(null, "angle"));
+        newParams.hatScale = Float.parseFloat(xml.getAttributeValue(null, "scale"));
+        newParams.color = Integer.parseInt(xml.getAttributeValue(null, "color"));
+        newParams.hat = Integer.parseInt(xml.getAttributeValue(null, "type"));
+        newParams.feather = xml.getAttributeValue(null, "feather").equals("yes");
+
+        post(new Runnable() {
+
+            @Override
+            public void run() {
+                params = newParams;
+
+                // Ensure the options are all set
+                setColor(params.color);
+                setImageUri(params.imageUri);
+                setHat(params.hat);
+                setFeather(params.feather);
+
+            }
+
+        });
+
     }
 }

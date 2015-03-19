@@ -187,6 +187,10 @@ public class Cloud {
 
             return view;
         }
+
+        public String getId(int position) {
+            return getItem(position).id;
+        }
     }
 
     /**
@@ -208,5 +212,34 @@ public class Cloud {
             }
         } while(tag != XmlPullParser.END_TAG &&
                 tag != XmlPullParser.END_DOCUMENT);
+    }
+
+    /**
+     * Open a connection to a hatting in the cloud.
+     * @param id id for the hatting
+     * @return reference to an input stream or null if this fails
+     */
+    public InputStream openFromCloud(final String id) {
+        // Create a get query
+        String query = LOAD_URL + "?user=" + USER + "&magic=" + MAGIC + "&pw=" + PASSWORD + "&id=" + id;
+
+        try {
+            URL url = new URL(query);
+
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            int responseCode = conn.getResponseCode();
+            if(responseCode != HttpURLConnection.HTTP_OK) {
+                return null;
+            }
+
+            InputStream stream = conn.getInputStream();
+            return stream;
+
+        } catch (MalformedURLException e) {
+            // Should never happen
+            return null;
+        } catch (IOException ex) {
+            return null;
+        }
     }
 }
